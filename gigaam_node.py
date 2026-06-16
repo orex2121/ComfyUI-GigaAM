@@ -412,7 +412,11 @@ class GigaAM_Transcription:
     def get_speaker_for_time(self, diarization, time_sec):
         if diarization is None:
             return ""
-        for turn, _, speaker in diarization.itertracks(yield_label=True):
+            
+        # Распаковываем аннотацию, если она обернута в новый формат DiarizeOutput
+        annotation = diarization.speaker_diarization if hasattr(diarization, "speaker_diarization") else diarization
+        
+        for turn, _, speaker in annotation.itertracks(yield_label=True):
             if turn.start <= time_sec <= turn.end:
                 return speaker
         return ""
