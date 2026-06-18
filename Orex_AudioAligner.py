@@ -36,6 +36,12 @@ class Orex_AudioAligner:
             s = int(parts[1])
             cs = int(parts[2]) 
             return m * 60 + s + cs / 100.0
+        elif len(parts) == 4:
+            h = int(parts[0])
+            m = int(parts[1])
+            s = int(parts[2])
+            cs = int(parts[3])
+            return h * 3600 + m * 60 + s + cs / 100.0
         return 0.0
 
     def align_audio(self, audio_batch, timestamps_batch):
@@ -80,9 +86,14 @@ class Orex_AudioAligner:
             audio_np = waveform_tensor.squeeze().numpy()
             actual_duration = len(audio_np) / sample_rate
             
-            rate = actual_duration / data["target_duration"]
-            # Ограничиваем скорость, чтобы алгоритм не сошел с ума на экстремальных значениях
-            rate = np.clip(rate, 0.5, 2.0) 
+            # Защита от нулевой или отрицательной длительности
+            if data["target_duration"] <= 0.001:
+                print(f"[Orex Aligner] Внимание: некорректная длительность целевого фрагмента ({data['target_duration']}s). Пропуск подгонки.")
+                rate = 1.0
+            else:
+                rate = actual_duration / data["target_duration"]
+                # Ограничиваем скорость, чтобы алгоритм не сошел с ума на экстремальных значениях
+                rate = np.clip(rate, 0.5, 2.0) 
 
             print(f"[Orex Aligner] Подгонка: {actual_duration:.2f}s -> {data['target_duration']:.2f}s (Скорость: {rate:.2f}x)")
 
