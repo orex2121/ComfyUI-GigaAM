@@ -9,6 +9,7 @@ import threading
 import types
 import copy
 import re
+import warnings # <-- Добавлено для подавления визуального спама
 
 import torch
 import torchaudio
@@ -127,7 +128,10 @@ try:
             
             _sb_lock.locked = True
             try:
-                return _orig_getattr(self, attr)
+                # <-- ИЗМЕНЕНИЕ ЗДЕСЬ: Глушим варнинги о редиректах модулей
+                with warnings.catch_warnings():
+                    warnings.filterwarnings("ignore", message=".*was deprecated, redirecting to.*")
+                    return _orig_getattr(self, attr)
             except ImportError:
                 raise AttributeError(attr)
             finally:
