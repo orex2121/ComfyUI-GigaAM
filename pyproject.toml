@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "comfyui-gigaam" # Уникальное имя пакета (рекомендуется строчными буквами)
+version = "1.0.2"       # Стартовая версия строго в формате SemVer (три числа)
+description = "GigaAM custom nodes for ComfyUI by OreX"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+    { name = "Oleg Konuykov (OreX)" }
+]
+dependencies = [
+    # Обязательно перечислите здесь pip-пакеты, нужные для работы GigaAM
+    # Например: "torch", "torchaudio", "numpy"
+]
+
+[project.urls]
+Repository = "https://github.com/orex2121/ComfyUI-GigaAM"
+
+[tool.comfy]
+PublisherId = "orex"
+DisplayName = "GigaAM (OreX)"
+Icon = "🎙️" # Иконка для менеджера (можно заменить)
