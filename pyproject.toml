@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "comfyui-gigaam" # Уникальное имя пакета (рекомендуется строчными буквами)
-version = "1.0.2"       # Стартовая версия строго в формате SemVer (три числа)
+version = "1.0.3"       # Стартовая версия строго в формате SemVer (три числа)
 description = "GigaAM custom nodes for ComfyUI by OreX"
 readme = "README.md"
 requires-python = ">=3.9"
