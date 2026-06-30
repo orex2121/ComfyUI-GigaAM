@@ -1,2 +1,0 @@
-gigaam[longform] @ git+https://github.com/salute-developers/GigaAM.git
-audiotsm
