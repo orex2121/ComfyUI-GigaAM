@@ -92,8 +92,8 @@ class Orex_AudioAligner:
                 rate = 1.0
             else:
                 rate = actual_duration / data["target_duration"]
-                # Ограничиваем скорость, чтобы алгоритм не сошел с ума на экстремальных значениях
-                rate = np.clip(rate, 0.5, 2.0) 
+                # Ограничиваем скорость: минимум 1.0 (только ускорение), максимум 2.0
+                rate = np.clip(rate, 1.0, 2.0) 
 
             print(f"[Orex Aligner] Подгонка: {actual_duration:.2f}s -> {data['target_duration']:.2f}s (Скорость: {rate:.2f}x)")
 
@@ -133,7 +133,6 @@ class Orex_AudioAligner:
         }
 
         print("[Orex Aligner] Сборка (WSOLA) успешно завершена!")
-        # Возвращаем кортеж со словарем (исправлено)
         return (final_audio_dict,)
 
 NODE_CLASS_MAPPINGS = {
