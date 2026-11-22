@@ -1,6 +1,19 @@
 import re
 import ast
 
+
+SRT_TIME_PATTERN = re.compile(
+    r"^(\d{1,3}:\d{2}:\d{2}[,.]\d{3})\s*-->\s*"
+    r"(\d{1,3}:\d{2}:\d{2}[,.]\d{3})(?:\s+.*)?$"
+)
+
+
+def _srt_time_to_orex(value):
+    hours, minutes, rest = value.replace(",", ".").split(":")
+    seconds, milliseconds = rest.split(".")
+    total_minutes = int(hours) * 60 + int(minutes)
+    return f"{total_minutes:02d}:{int(seconds):02d}:{int(milliseconds) // 10:02d}"
+
 class Orex_CuttingSubtitles:
     def __init__(self):
         pass
@@ -50,7 +63,41 @@ class Orex_CuttingSubtitles:
         # .*? в самом начале игнорирует любой мусор (например, оставшиеся кавычки) до таймкода
         pattern = re.compile(r"^.*?(\[[0-9:\s-]+\])[\s:]*(.*)$")
 
-        for line in lines:
+        line_index = 0
+        while line_index < len(lines):
+            line = lines[line_index]
+
+            # SRT cue numbers are service lines and are not part of the subtitle text.
+            if (
+                line.isdigit()
+                and line_index + 1 < len(lines)
+                and SRT_TIME_PATTERN.match(lines[line_index + 1])
+            ):
+                line_index += 1
+                line = lines[line_index]
+
+            srt_match = SRT_TIME_PATTERN.match(line)
+            if srt_match:
+                line_index += 1
+                cue_text = []
+                while line_index < len(lines):
+                    next_line = lines[line_index]
+                    if SRT_TIME_PATTERN.match(next_line) or (
+                        next_line.isdigit()
+                        and line_index + 1 < len(lines)
+                        and SRT_TIME_PATTERN.match(lines[line_index + 1])
+                    ):
+                        break
+                    cue_text.append(next_line)
+                    line_index += 1
+
+                text = " ".join(cue_text).rstrip("'\"]")
+                start = _srt_time_to_orex(srt_match.group(1))
+                end = _srt_time_to_orex(srt_match.group(2))
+                subs_with_timestamps.append(f"[{start} - {end}]: {text}")
+                clean_text.append(text)
+                continue
+
             match = pattern.match(line)
             if match:
                 timestamp = match.group(1)
@@ -67,6 +114,8 @@ class Orex_CuttingSubtitles:
                 # Если строка совсем не содержит таймкод, пропускаем её без изменений
                 subs_with_timestamps.append(line)
                 clean_text.append(line)
+
+            line_index += 1
 
         # Подстраховка от пустых списков
         if not subs_with_timestamps:
