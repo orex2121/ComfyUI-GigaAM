@@ -1,6 +1,5 @@
 audiotsm
 hydra-core
 omegaconf
-pyannote.audio
 sentencepiece
 soundfile
