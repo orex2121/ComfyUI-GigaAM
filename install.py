@@ -4,7 +4,7 @@ import subprocess
 import sys
 import tempfile
 
-GIGAAM_GIT = "gigaam @ git+https://github.com"
+GIGAAM_GIT = "gigaam @ git+https://github.com/salute-developers/GigaAM.git"
 
 
 def is_installed(pkg: str) -> bool:
