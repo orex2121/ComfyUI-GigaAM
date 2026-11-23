@@ -1,0 +1,5 @@
+audiotsm
+hydra-core
+omegaconf
+sentencepiece
+soundfile
